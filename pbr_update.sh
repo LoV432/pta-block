@@ -37,7 +37,7 @@ done
 for asn_domain in $lov432_asns; do
     asns=$(curl -s "https://raw.githubusercontent.com/LoV432/pta-block/master/asns/$asn_domain" | tr '\n' ' ')
     for asn in $asns; do
-        asn_ips=$(whois -h whois.radb.net -- "-i origin $asn" | grep '^route:' | tr -d 'routes: ')
+        asn_ips=$(whois -h whois.radb.net -- "-i origin $asn" | grep '^route:' | tr -d 'routes: ' | tr '\n' ' ')
         ips="$ips $asn_ips"
     done
 done
