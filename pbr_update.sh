@@ -3,7 +3,6 @@
 # An OpenWRT script that fetches IPs/Domains from multiple sources and adds them to a PBR rule named "pta-block".
 # To use this script, you need to setup a VPN connection and install the PBR package on your OpenWRT. 
 # Then create a rule named "pta-block" in PBR which is routed through the VPN. 
-# The script will fetch IPs from multiple sources and add them to the rule.
 # The script requires the following dependencies:
 # - whois
 # - curl
