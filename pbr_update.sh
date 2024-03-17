@@ -32,11 +32,11 @@ for fetch_domain in $lov432_domains; do
         domains="$domains $fetch_domain"
 done
 
-# Fetch asn ips from radb
+# Fetch asn ips using whois
 for asn_domain in $lov432_asns; do
     asns=$(curl -s "https://raw.githubusercontent.com/LoV432/pta-block/master/asns/$asn_domain" | tr '\n' ' ')
     for asn in $asns; do
-        asn_ips=$(whois -h whois.radb.net -- "-i origin $asn" | grep '^route:' | tr -d 'routes: ' | tr '\n' ' ')
+        asn_ips=$(whois -h whois.pwhois.org "type=json routeview source-as=${asn#as}" | grep -o '"Prefix":"[^"]*' | awk -F ':"' '{print $2}' | tr -d '\' | tr '\n' ' ')
         ips="$ips $asn_ips"
     done
 done
