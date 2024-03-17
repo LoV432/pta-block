@@ -21,27 +21,24 @@ if ! [ -x "$(command -v whois)" ] || ! [ -x "$(command -v curl)" ]; then
 fi
 
 lov432_domains=""   # Anything from https://github.com/LoV432/pta-block/tree/master/domains
-lov432_asns=""      # Anything from https://github.com/LoV432/pta-block/tree/master/asns
 v2fly_domains=""    # Anything from https://github.com/v2fly/domain-list-community/tree/master/data
 domains=""          # Add any hardcoded domains here
 ips=""              # Add any hardcoded IPs here
 
-# Fetch domains
-for fetch_domain in $lov432_domains; do
-        fetch_domain=$(curl -s "https://raw.githubusercontent.com/LoV432/pta-block/master/domains/$fetch_domain" | tr '\n' ' ')
-        domains="$domains $fetch_domain"
+# Prase domains from lov432
+for lov432_domain in $lov432_domains; do
+        fetched_domains=$(curl -s "https://raw.githubusercontent.com/LoV432/pta-block/master/domains/$lov432_domain" | tr '\n' ' ')
+        for fetched_domain in $fetched_domains; do
+            if [[ $fetched_domain == "as:"* ]]; then
+                asn_ips=$(whois -h whois.pwhois.org "type=json routeview source-as=${fetched_domain#as:}" | grep -o '"Prefix":"[^"]*' | awk -F ':"' '{print $2}' | tr -d '\' | tr '\n' ' ')
+                ips="$ips $asn_ips"
+            else
+                domains="$domains $fetched_domain"
+            fi
+        done
 done
 
-# Fetch asn ips using whois
-for asn_domain in $lov432_asns; do
-    asns=$(curl -s "https://raw.githubusercontent.com/LoV432/pta-block/master/asns/$asn_domain" | tr '\n' ' ')
-    for asn in $asns; do
-        asn_ips=$(whois -h whois.pwhois.org "type=json routeview source-as=${asn#as}" | grep -o '"Prefix":"[^"]*' | awk -F ':"' '{print $2}' | tr -d '\' | tr '\n' ' ')
-        ips="$ips $asn_ips"
-    done
-done
-
-# Fetch domains from v2fly
+# Parse domains from v2fly
 for fetch_domain in $v2fly_domains; do
         fetch_domain=$(curl -s "https://raw.githubusercontent.com/v2fly/domain-list-community/master/data/$fetch_domain" | tr '\n' ' ')
         domains="$domains $fetch_domain"
