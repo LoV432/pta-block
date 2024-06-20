@@ -32,6 +32,9 @@ for lov432_domain in $lov432_domains; do
             if [[ $fetched_domain == "as:"* ]]; then
                 asn_ips=$(whois -h whois.pwhois.org "type=json routeview source-as=${fetched_domain#as:}" | grep -o '"Prefix":"[^"]*' | awk -F ':"' '{print $2}' | tr -d '\' | tr '\n' ' ')
                 ips="$ips $asn_ips"
+            elif [[ $fetched_domain == "#"* ]]; then
+                # Ignore comments
+                continue
             else
                 domains="$domains $fetched_domain"
             fi

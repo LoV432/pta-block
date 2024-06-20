@@ -1,0 +1,6 @@
+# PTA is throtteling cloudflare so pulling docker images from cloudflare is very slow
+docker.io
+auth.docker.io
+registry-1.docker.io
+cloudflare.docker.com 
+production.cloudflare.docker.com
