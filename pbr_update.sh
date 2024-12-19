@@ -1,8 +1,8 @@
 #!/bin/ash
 
-# An OpenWRT script that fetches IPs/Domains from multiple sources and adds them to a PBR rule named "pta-block".
-# To use this script, you need to setup a VPN connection and install the PBR package on your OpenWRT. 
-# Then create a rule named "pta-block" in PBR which is routed through the VPN. 
+# An OpenWRT script that fetches IPs/Domains from multiple sources and adds them to a PBR rules.
+# To use this script, you need to setup a VPN connection and install the PBR package on your OpenWRT.
+# Then create 2 rules named "pbr_ips" amd "pbr_domains" in PBR which is routed through the VPN.
 # The script requires the following dependencies:
 # - whois
 # - curl
@@ -49,9 +49,8 @@ for fetch_domain in $v2fly_domains; do
         domains="$domains $fetch_domain"
 done
 
-finalDomains="$domains $ips"
-
-rulenum=$(uci show pbr | grep 'pta-block' | sed 's/.*\@//;s/\.name.*//'); uci set pbr.@"$rulenum".dest_addr="$finalDomains"
+rulenum=$(uci show pbr | grep 'pbr_ips' | sed 's/.*\@//;s/\.name.*//'); uci set pbr.@"$rulenum".dest_addr="$ips"
+rulenum=$(uci show pbr | grep 'pbr_domains' | sed 's/.*\@//;s/\.name.*//'); uci set pbr.@"$rulenum".dest_addr="$domains"
 uci commit pbr
 service pbr restart
 
