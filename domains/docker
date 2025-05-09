@@ -1,4 +1,3 @@
-#_PTA_is_throttling_cloudflare_so_pulling_docker_images_from_cloudflare_is_very_slow
 docker.io
 auth.docker.io
 registry-1.docker.io
